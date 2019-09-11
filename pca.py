@@ -5,6 +5,7 @@ import chart_studio.plotly as py
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.decomposition import PCA
 
 PATH = "iris.data"
 
@@ -55,10 +56,13 @@ print("\n---------Com Matriz de Covariância---------")
 print("\nAutovetores \n", autovetores_correlacao)
 print("\nAutovalores \n", autovalores_correlacao)
 
+for ev in autovetores_cov:
+    np.testing.assert_array_almost_equal(1.0, np.linalg.norm(ev))
+
 # Na linha abaixo, estamos fazendo uma lista de tuplas com (autovalor, autovetor)
 pares = [
-    (np.abs(autovalores_correlacao[i]), autovetores_correlacao[:, i])
-    for i in range(len(autovalores_correlacao))
+    (np.abs(autovalores_cov[i]), autovetores_cov[:, i])
+    for i in range(len(autovalores_cov))
 ]
 
 # Nas linhas 66 e 67, estamos ordenando nossas tuplas decrescentemente
@@ -70,12 +74,21 @@ print("Autovalores em ordem decrescente")
 for i in pares:
     print(i[0])
 
-# Nas linhas 76-78, estamos criando a nossa explicacao da variancia
+# Nas linhas 76-77, estamos criando a nossa explicacao da variancia dividindo cada valor dos autovetores de correlação pela soma dos autovalores
 tot = sum(autovalores_correlacao)
 explicacao_variancia = [
     (i / tot) * 100 for i in sorted(autovalores_correlacao, reverse=True)
 ]
-variancia_cum = np.cumsum(explicacao_variancia )
+
+#Nas linhas 81-87 estamos criando o gráfico da Explicação da Variância
+obj = ['Feature 1', 'Feature 2', 'Feature 3', 'Feature 4']
+plt.bar(obj, explicacao_variancia, color="blue")
+plt.xticks(obj)
+plt.ylabel('Pocentagem')
+plt.xlabel('Features')
+plt.title("Explicação da Variância")
+plt.figure()
+
 # Na linha abaixo, estamos printando a explicacao da variancia de cada feature
 print("\nExplicacao das variancias\n",explicacao_variancia)
 
@@ -85,95 +98,20 @@ matriz_reduzida = np.hstack((pares[0][1].reshape(4, 1), pares[1][1].reshape(4, 1
 #Na linha abaixo estamos printando a nossa matriz reduzida
 print("\nMatriz reduzida:\n", matriz_reduzida)
 
+#Na linha abaixo, temos o PCA pronto com apenas 2 dimensoes
 Y = X_std.dot(matriz_reduzida)
 
-total_rows = data.count
-number_of_iris = len(data)
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_std)
 
+#Nas linhas 102-111, estamos plotando o gráfico de PCA desse dataset
+color = ['navy', 'turquoise', 'darkorange']
+targets = ['Iris-setosa', 'Iris-versicolor', 'Iris-virginica']
+lw = 2
 
-
-
-data["ID"] = data.index
-data["ratio"] = data["sepal-length"]/data["sepal-width"]
-sns.lmplot(x="ID", y="ratio", data=data, hue="Class", fit_reg=False, legend=False)
-
-plt.legend()
+for color, name in zip(color, targets):
+    plt.scatter(Y[y == name, 0], Y[y == name, 1], color=color, alpha=.8, lw=lw,
+                label=name)
+plt.legend(loc='best', shadow=False, scatterpoints=1)
+plt.title('PCA of IRIS dataset')
 plt.show()
-
-'''
-
-trace1 = dict(
-    type='bar',
-    x=['PC %s' %i for i in range(1,5)],
-    y=explicacao_variancia,
-    name='Individual'
-)
-
-trace2 = dict(
-    type='scatter',
-    x=['PC %s' %i for i in range(1,5)], 
-    y= variancia_cum,
-    name='Cumulative'
-)
-
-dados = [trace1, trace2]
-
-layout=dict(
-    title='Explained variance by different principal components',
-    yaxis=dict(
-        title='Explained variance in percent'
-    ),
-    annotations=list([
-        dict(
-            x=1.16,
-            y=1.05,
-            xref='paper',
-            yref='paper',
-            text='Explained Variance',
-            showarrow=False,
-        )
-    ])
-)
-
-fig = dict(data=dados, layout=layout)
-py.iplot(fig, filename='selecting-principal-components')
-
-# plotting histograms
-df = []
-
-legend = {0: False, 1: False, 2: False, 3: True}
-
-colors = {
-    "Iris-setosa": "#0D76BF",
-    "Iris-versicolor": "#00cc96",
-    "Iris-virginica": "#EF553B",
-}
-
-for col in range(4):
-    for key in colors:
-        trace = dict(
-            type="histogram",
-            x=list(X[y == key, col]),
-            opacity=0.75,
-            xaxis="x%s" % (col + 1),
-            marker=dict(color=colors[key]),
-            name=key,
-            showlegend=legend[col],
-        )
-        data.append(trace)
-
-layout = dict(
-    barmode="overlay",
-    xaxis=dict(domain=[0, 0.25], title="sepal length (cm)"),
-    xaxis2=dict(domain=[0.3, 0.5], title="sepal width (cm)"),
-    xaxis3=dict(domain=[0.55, 0.75], title="petal length (cm)"),
-    xaxis4=dict(domain=[0.8, 1], title="petal width (cm)"),
-    yaxis=dict(title="count"),
-    title="Distribution of the different Iris flower features",
-)
-
-fig = dict(data=df, layout=layout)
-py.iplot(fig, filename="exploratory-vis-histogram")
-
-
-'''
