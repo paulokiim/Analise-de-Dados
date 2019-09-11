@@ -1,7 +1,10 @@
 import pandas as pd
 import numpy as np
-import plotly as py
+import plotly.graph_objects as go
+import chart_studio.plotly as py
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 PATH = "iris.data"
 
@@ -72,7 +75,7 @@ tot = sum(autovalores_correlacao)
 explicacao_variancia = [
     (i / tot) * 100 for i in sorted(autovalores_correlacao, reverse=True)
 ]
-
+variancia_cum = np.cumsum(explicacao_variancia )
 # Na linha abaixo, estamos printando a explicacao da variancia de cada feature
 print("\nExplicacao das variancias\n",explicacao_variancia)
 
@@ -84,8 +87,21 @@ print("\nMatriz reduzida:\n", matriz_reduzida)
 
 Y = X_std.dot(matriz_reduzida)
 
+total_rows = data.count
+number_of_iris = len(data)
 
-"""
+
+
+
+data["ID"] = data.index
+data["ratio"] = data["sepal-length"]/data["sepal-width"]
+sns.lmplot(x="ID", y="ratio", data=data, hue="Class", fit_reg=False, legend=False)
+
+plt.legend()
+plt.show()
+
+'''
+
 trace1 = dict(
     type='bar',
     x=['PC %s' %i for i in range(1,5)],
@@ -96,7 +112,7 @@ trace1 = dict(
 trace2 = dict(
     type='scatter',
     x=['PC %s' %i for i in range(1,5)], 
-    y=variancia_cum,
+    y= variancia_cum,
     name='Cumulative'
 )
 
@@ -158,5 +174,6 @@ layout = dict(
 
 fig = dict(data=df, layout=layout)
 py.iplot(fig, filename="exploratory-vis-histogram")
-"""
 
+
+'''

@@ -6,7 +6,7 @@ from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
-
+import matplotlib.pyplot as plt
 PATH = "iris.data"
 
 names = ["sepal-length", "sepal-width", "petal-length", "petal-width", "Class"]
@@ -60,3 +60,4 @@ print(matrix)
 # Na linha abaixo, estamos printando a acurácia da nossa predição após todas os ajustes de PCA
 print("Accuracy ", accuracy_score(y_test, y_pred))
 
+#plt.scatter((variance[0]), (variance[0]))
