@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import plotly as py
+from sklearn.preprocessing import StandardScaler
 
 PATH = "iris.data"
 
