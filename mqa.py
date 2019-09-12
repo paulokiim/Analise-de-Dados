@@ -124,13 +124,12 @@ iris = datasets.load_iris()
 X = iris.data
 y = iris.target
 
-# In general, it's a good idea to scale the data prior to PCA.
-scaler = StandardScaler()
-scaler.fit(X)
-X=scaler.transform(X)    
+# Essa parte do código é dedicada a plotar um biplot
+
+X= X_std 
 
 pca = PCA()
-x_new = pca.fit_transform(X)
+x_new = pca.fit_transform(X) # o pca eh aplicado no dataset 
 
 def myplot(score,coeff,labels=None):
     xs = score[:,0]
