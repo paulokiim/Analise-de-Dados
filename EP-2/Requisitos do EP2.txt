@@ -4,6 +4,6 @@ Fazer uma analise fatorial exploratorio e comfirmatorio:
 - Comparacao de modelo (Exploratorio e Comfirmatorio
 - Encontrar conjuntos de dados adequados
 - Fazer testes (Bartlett, KMO...)
-- Fazer rotacoes (Varimax e Quatimax)
+- Fazer rotacoes (Varimax e Quartimax)
 - Identificar constructor (fator)
 - Validacao (Jacknife, Booststrap...)
