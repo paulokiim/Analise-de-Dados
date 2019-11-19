@@ -68,15 +68,3 @@ sns.heatmap(corr,
         yticklabels=corr.columns,
             linewidths=.75)
 
-export_graphviz(estimator, out_file='tree.dot', 
-                feature_names = feature_names,
-                class_names = y_train_str,
-                rounded = True, proportion = True, 
-                label='root',
-                precision = 2, filled = True)
-
-from subprocess import call
-call(['dot', '-Tpng', 'tree.dot', '-o', 'tree.png', '-Gdpi=600'])
-
-from IPython.display import Image
-Image(filename = 'tree.png')
